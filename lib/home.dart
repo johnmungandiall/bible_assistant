@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
           title: const Text('Search Results',
-              style: TextStyle(color: Color(0xFFE0E0E0))),
+                  style: TextStyle(color: Color(0xFFE0E0E0))),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
@@ -109,6 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Color(0xFFE0E0E0)),
+              onPressed: () {
+                Navigator.pop(context);
+                _searchController.clear();
+                _showSearchDialog();
+              },
+            ),
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Close',
@@ -118,9 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
-  }
-
-  void _showVerseDialog(String verse) {
+  }  void _showVerseDialog(String verse) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

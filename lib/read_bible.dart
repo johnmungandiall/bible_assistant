@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bible_assistant/model.dart';
 import 'package:bible_assistant/referencedata.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ class ReadBible extends StatefulWidget {
 
 class _ReadBibleState extends State<ReadBible> {
   String? selectedVerse;
+  String? selectedBook;
   late Future<List<String>> _booksFuture;
   final TextEditingController _searchController = TextEditingController();
   List<String> searchResults = [];

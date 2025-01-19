@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bible_assistant/model.dart';
+import 'package:bible_assistant/referencedata.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +14,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? selectedVerse;
   late Future<List<String>> _booksFuture;
+  final TextEditingController _searchController = TextEditingController();
+  List<String> searchResults = [];
 
   @override
   void initState() {
@@ -33,6 +36,88 @@ class _HomeScreenState extends State<HomeScreen> {
             .replaceAll('assets/Bible-telugu-main/', '')
             .replaceAll('.json', ''))
         .toList();
+  }
+
+  void _showSearchDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        title: const Text('Search Book',
+            style: TextStyle(color: Color(0xFFE0E0E0))),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _searchController,
+              style: const TextStyle(color: Color(0xFFE0E0E0)),
+              decoration: const InputDecoration(
+                hintText: 'Enter first letter...',
+                hintStyle: TextStyle(color: Color(0xFFBDBDBD)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF90CAF9)),
+                ),
+              ),
+              onChanged: (value) {
+                if (value.length == 1) {
+                  String letter = value.toLowerCase();
+                  setState(() {
+                    if (referencedata.containsKey(letter)) {
+                      searchResults = referencedata[letter]!;
+                    } else {
+                      searchResults.clear();
+                    }
+                  });
+                  Navigator.pop(context);
+                  _showSearchResults();
+                }
+              },
+              maxLength: 1,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSearchResults() {
+    if (searchResults.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: const Text('Search Results',
+              style: TextStyle(color: Color(0xFFE0E0E0))),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: searchResults.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    searchResults[index],
+                    style: const TextStyle(color: Color(0xFFE0E0E0)),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Scroll to the selected book
+                    // You'll need to implement the scrolling logic here
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close',
+                  style: TextStyle(color: Color(0xFF90CAF9))),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _showVerseDialog(String verse) {
@@ -95,9 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: Color(0xFF90CAF9)),
-              onPressed: () {
-                // Implement search functionality
-              },
+              onPressed: _showSearchDialog,
             ),
             IconButton(
               icon: const Icon(Icons.settings, color: Color(0xFF90CAF9)),

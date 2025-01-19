@@ -45,36 +45,44 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: const Color(0xFF1E1E1E),
         title: const Text('Search Book',
             style: TextStyle(color: Color(0xFFE0E0E0))),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _searchController,
-              style: const TextStyle(color: Color(0xFFE0E0E0)),
-              decoration: const InputDecoration(
-                hintText: 'Enter first letter...',
-                hintStyle: TextStyle(color: Color(0xFFBDBDBD)),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF90CAF9)),
-                ),
-              ),
-              onChanged: (value) {
-                if (value.length == 1) {
-                  String letter = value.toLowerCase();
+        content: SizedBox(
+          width: double.maxFinite,
+          child: GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: referencedata.keys.length,
+            itemBuilder: (context, index) {
+              String letter = referencedata.keys.elementAt(index);
+              return InkWell(
+                onTap: () {
                   setState(() {
-                    if (referencedata.containsKey(letter)) {
-                      searchResults = referencedata[letter]!;
-                    } else {
-                      searchResults.clear();
-                    }
+                    searchResults = referencedata[letter]!;
                   });
                   Navigator.pop(context);
                   _showSearchResults();
-                }
-              },
-              maxLength: 1,
-            ),
-          ],
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF90CAF9),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    letter.toUpperCase(),
+                    style: const TextStyle(
+                      color: Color(0xFF1E1E1E),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
